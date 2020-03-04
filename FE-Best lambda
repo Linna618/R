@@ -1,0 +1,32 @@
+install.packages("Ecdat")
+library("Ecdat")
+data(Clothing)
+?Clothing
+tsales=Clothing$tsales
+
+qqnorm(as.vector(tsales),datax=TRUE,main="QQ plot of tsales")
+qqline(as.vector(tsales),datax=TRUE,col="red",lwd=2)
+
+qqnorm(as.vector(sqrt(tsales)),datax=TRUE,main="QQ plot of sqrt of tsales")
+qqline(as.vector(sqrt(tsales)),datax=TRUE,col="red",lwd=2)
+
+qqnorm(as.vector((tsales)^0.25),datax=TRUE,main="QQ plot of fourth-root of tsales")
+qqline(as.vector((tsales)^0.25),datax=TRUE,col="red",lwd=2)
+
+library("MASS")
+bt=boxcox(tsales~1,lambda=seq(0,0.5,1/10),plotit=TRUE,xlab=expression(lambda),
+       ylab="log-likelihood")
+
+bestlambda=bt$x[bt$y==max(bt$y)]
+bestlambda
+
+range(bt$x[bt$y>max(bt$y)-qchisq(0.99,df=1)/2])
+
+install.packages("rugarch")
+library("rugarch")
+
+est2=fitdistr(tsales^bestlambda,'t',start=list(m=0.01,s=0.001,df=3))
+options(digits=3)
+
+
+
