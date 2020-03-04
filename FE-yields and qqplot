@@ -1,0 +1,107 @@
+load("D:/cornell/FE/lab/lab2/TreasuryYields.RData")
+head(yields)
+tail(yields)
+
+#1
+T = c(1/12,1/6,1/4,1/2,1,2,3,5,7,10,20,30)
+date = yields$date
+yields = yields[,-1]
+yields19=yields[which(date=="2019-12-24"),]
+plot(T,yields19,main="Yields from 2015-2019",
+     xlab="T", ylab="yields",ylim=c(0,3.5))
+
+df = data.frame(date=c("2015-12-24", "2016-12-24", "2017-12-24","2018-12-24")) 
+df$day <- weekdays(as.Date(df$date))
+df
+yields15=yields[which(date=="2015-12-24"),]
+yields16=yields[which(date=="2016-12-23"),]
+yields17=yields[which(date=="2017-12-22"),]
+yields18=yields[which(date=="2018-12-24"),]
+
+lines(T,yields15,type="l",col="red")
+lines(T,yields16,type="l",col="blue")
+lines(T,yields17,type="l",col="black")
+lines(T,yields18,type="l",col="green")
+
+legend("bottomright",legend=c("2015","2016","2017","2018","2019"),
+       pch=c(NA,NA,NA,NA,"o"),lty=c(1,1,1,1,NA),
+       col=c("red","blue","black","green","black"),pt.cex=1,cex=0.6)
+
+#2
+n=length(T)
+Tyield19=T*yields19
+forward19=diff(unlist(c(Tyield19)),lag=1)/diff(T,lag=1)
+Tyield15=T*yields15
+forward15=diff(unlist(c(Tyield15)),lag=1)/diff(T,lag=1)
+Tyield16=T*yields16
+forward16=diff(unlist(c(Tyield16)),lag=1)/diff(T,lag=1)
+Tyield17=T*yields17
+forward17=diff(unlist(c(Tyield17)),lag=1)/diff(T,lag=1)
+Tyield18=T*yields18
+forward18=diff(unlist(c(Tyield18)),lag=1)/diff(T,lag=1)
+
+plot(T[2:n],forward19,main="Forward Rate from 2015-2019",
+     xlab="T", ylab="forward rate",ylim=c(1,4))
+lines(T[2:n],forward15,type="l",col="red")
+lines(T[2:n],forward16,type="l",col="blue")
+lines(T[2:n],forward17,type="l",col="black")
+lines(T[2:n],forward18,type="l",col="green")
+
+legend("bottomright",legend=c("2015","2016","2017","2018","2019"),
+       pch=c(NA,NA,NA,NA,"o"),lty=c(1,1,1,1,NA),
+       col=c("red","blue","black","green","black"),pt.cex=1,cex=0.6)
+
+library(nycflights13)
+library(tidyverse)
+
+#Q3 
+install.packages("quantmod")
+library(quantmod)
+sDate=as.Date("2012-12-31")
+eDate=as.Date("2019-12-31")
+getSymbols('VZ',src='yahoo',from=sDate, to=eDate)
+adjVZ=Ad(VZ)
+rVZ=diff(log(adjVZ))[-1]
+#3, 4, 5, 6, 8, and 10 tail index
+library(MASS)
+par(mfrow=c(2,3))
+sort_VZ=sort(rVZ)
+m=length(rVZ)
+grid=(1:m)/(m+1)
+
+df = 3
+qqplot(as.vector(sort_VZ),qt(grid,df=df), main=paste("t-probability plot, df= ",df),
+       xlab="Data", ylab="t-quantiles")
+lmfit=lm(qt(c(0.25,0.75),df=df) ~ quantile(sort_VZ,c(0.25,0.75)))
+abline(lmfit,col="red",lwd=2)
+df=4
+qqplot(as.vector(sort_VZ),qt(grid,df=df), main=paste("t-probability plot, df= ",df),
+       xlab="Data", ylab="t-quantiles")
+lmfit=lm(qt(c(0.25,0.75),df=df) ~ quantile(sort_VZ,c(0.25,0.75)))
+abline(lmfit,col="red",lwd=2)
+
+df=5
+qqplot(as.vector(sort_VZ),qt(grid,df=df), main=paste("t-probability plot, df= ",df),
+       xlab="Data", ylab="t-quantiles")
+lmfit=lm(qt(c(0.25,0.75),df=df) ~ quantile(sort_VZ,c(0.25,0.75)))
+abline(lmfit,col="red",lwd=2)
+
+df=6
+qqplot(as.vector(sort_VZ),qt(grid,df=df), main=paste("t-probability plot, df= ",df),
+       xlab="Data", ylab="t-quantiles")
+lmfit=lm(qt(c(0.25,0.75),df=df) ~ quantile(sort_VZ,c(0.25,0.75)))
+abline(lmfit,col="red",lwd=2)
+
+df=8
+qqplot(as.vector(sort_VZ),qt(grid,df=df), main=paste("t-probability plot, df= ",df),
+       xlab="Data", ylab="t-quantiles")
+lmfit=lm(qt(c(0.25,0.75),df=df) ~ quantile(sort_VZ,c(0.25,0.75)))
+abline(lmfit,col="red",lwd=2)
+
+df=10
+qqplot(as.vector(sort_VZ),qt(grid,df=df), main=paste("t-probability plot, df= ",df),
+       xlab="Data", ylab="t-quantiles")
+lmfit=lm(qt(c(0.25,0.75),df=df) ~ quantile(sort_VZ,c(0.25,0.75)))
+abline(lmfit,col="red",lwd=2)
+
+
