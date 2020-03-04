@@ -1,0 +1,103 @@
+load("D:/cornell/FE/lab/lab1.RData")
+head(rSBUX)
+tail(rSBUX)
+par(mfrow=c(1,2))
+plot(rSBUX)
+class(rSBUX)
+r=as.numeric(rSBUX)
+class(r)
+plot(r,type="l")
+#rnorm(sampleSize, mean=rMean, sd=rSigma)
+
+#Q1 r=log(1+R)
+R=exp(r)-1
+par(mfrow=c(1,1))
+plot(r, R, main="Returns",
+     xlab="r", ylab="R")
+abline(a=0,b=1,col="red")
+
+min(R-r)
+
+#Q2
+
+t.test(R,r,paired = TRUE)
+cor(R,r)
+
+#Q3
+#a
+set.seed(123)
+maxp=0
+p0=91
+for (i in 1:100000) 
+{ logr = rnorm(20,mean=0.00058,sd=0.019)
+  price = c(p0, rep(0, 20))
+  for (i in 1:length(logr)) 
+{ price[i+1] = price[i] * exp(logr[i])
+  }
+  maxp = maxp + max(price)/100000
+}
+maxp
+mean(price)
+sd(price)
+mean(price)-2.576*sd(price)
+mean(price)+2.576*sd(price)
+
+#b
+set.seed(123)
+prob=rep(0,100000)
+p0=91
+for (j in 1:100000) 
+{ logr = rnorm(20,mean=0.00058,sd=0.019)
+price = c(p0, rep(0, 20))
+for (i in 1:length(logr)) 
+{ price[i+1] = price[i] * exp(logr[i])
+}
+
+mmin=which(price==min(price))
+mmax=which(price==max(price))
+if (mmin<mmax){prob[j]=1}
+else {prob[j]=0}
+}
+
+mean(prob)
+sd(prob)
+mean(prob)-2.576*sd(prob)
+mean(prob)+2.576*sd(prob)
+
+#c
+set.seed(123)
+contract=rep(0,100000)
+p0=91
+for (j in 1:100000)
+{logr = rnorm(20,mean=0.00058,sd=0.019)
+price = c(p0, rep(0, 20))
+for (i in 1:length(logr)) 
+{ price[i+1] = price[i] * exp(logr[i])
+}
+if (max(price)>98 & length(which(price<89))<2) {contract[j]=10}
+else {contract[j]=0}}
+
+mean(contract)
+mean(contract)-2.576*sd(contract)
+mean(contract)+2.576*sd(contract)
+
+install.packages("quantmod")
+library(quantmod)
+sDate=as.Date("2012-12-31")
+eDate=as.Date("2019-12-31")
+getSymbols('VZ',src='yahoo',from=sDate, to=eDate)
+adjVZ=Ad(VZ)
+rVZ=diff(log(adjVZ))[-1]
+
+qqnorm(as.vector(rVZ),datax=TRUE,main="QQ plot of Verizon log returns")
+qqline(as.vector(rVZ),datax=TRUE,col="red",lwd=2)
+#3, 4, 5, 6, 8, and 10 tail index
+sort_VZ=sort(rVZ)
+m=length(rVZ)
+grid=(1:m)/(m+1)
+par(mfrow=c(2,3))
+df=3
+qqplot(sort_VZ,qt(grid,df=df), main=paste("t-probability plot, df= ",df),
+       xlab="Data", ylab="t-quantiles")
+
+  
